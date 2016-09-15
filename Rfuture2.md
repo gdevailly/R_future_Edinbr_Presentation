@@ -59,10 +59,10 @@ First, let's create slow functions:
 > t0 <- Sys.time()
 > 
 > slow_rnorm(4)
-[1] 0.7654462 1.8105259 0.7110902 0.1387135
+[1]  0.242154279  1.012279949 -1.338579594  0.003491644
 > 
 > Sys.time() - t0
-Time difference of 3.010155 secs
+Time difference of 3.012811 secs
 ```
 
 `%<-%` is non blocking (2/2):
@@ -74,10 +74,10 @@ Without `%<-%`:
 > a <- slow_rnorm(2)
 > 
 > Sys.time() - t0
-Time difference of 3.008813 secs
+Time difference of 3.008517 secs
 > 
 > a
-[1] -0.9071859 -0.5388912
+[1] -0.05181082 -0.66309328
 ```
 ***
 With `%<-%`:
@@ -87,10 +87,10 @@ With `%<-%`:
 > b %<-% slow_rnorm(2)
 > 
 > Sys.time() - t0
-Time difference of 0.01002908 secs
+Time difference of 0.009992123 secs
 > 
 > b
-[1] -0.2908547  0.1969033
+[1] -0.3755324  0.6766176
 ```
 
 
@@ -105,13 +105,13 @@ When the variable is needed, the R (main) process will wait until the *future* i
 > b %<-% slow_rnorm(2)
 > 
 > Sys.time() - t0
-Time difference of 0.007998943 secs
+Time difference of 0.006513119 secs
 > 
 > b
-[1] -0.001421231  1.341619561
+[1]  0.7877939 -0.6519630
 > 
 > Sys.time() - t0
-Time difference of 3.012523 secs
+Time difference of 3.012473 secs
 ```
 
 *futures* can be run in parallel:
@@ -124,17 +124,17 @@ Standard assignment:
 > x2 <- slow_rnorm(2)
 > 
 > Sys.time() - t0
-Time difference of 6.010204 secs
+Time difference of 6.019479 secs
 > 
 > list(x1, x2)
 [[1]]
-[1] 0.01463919 2.02325234
+[1] -1.605941 -2.310211
 
 [[2]]
-[1] -0.8652523 -0.3555410
+[1] 0.6198926 1.4842387
 > 
 > Sys.time() - t0
-Time difference of 6.017205 secs
+Time difference of 6.026482 secs
 ```
 ***
 Assignment with future:
@@ -145,20 +145,20 @@ Assignment with future:
 > x4 %<-% slow_rnorm(2)
 > 
 > Sys.time() - t0
-Time difference of 0.0485909 secs
+Time difference of 0.05050611 secs
 > 
 > list(x3, x4)
 [[1]]
-[1] -0.1183447 -0.9877792
+[1] 1.3221904 0.0371681
 
 [[2]]
-[1]  0.7939648 -0.9046369
+[1]  0.3116354 -1.8248445
 > 
 > Sys.time() - t0
-Time difference of 3.059174 secs
+Time difference of 3.061399 secs
 ```
 
-*future* allow easy parallelisation of heterogenous tasks (1/3)
+*future* allows easy parallelisation of heterogenous tasks (1/3)
 ========================================================
 
 ```r
@@ -177,15 +177,15 @@ Standard assignment:
 > 
 > data.frame(myMean, mySd, myRnorm, myRunif)
   myMean    mySd    myRnorm   myRunif
-1    2.5 2.12132 -1.7981085 0.3523992
-2    3.5 2.12132 -2.1243283 0.3108422
-3    4.5 2.12132 -0.7201249 0.7135452
+1    2.5 2.12132 -0.6964756 0.8142671
+2    3.5 2.12132  1.9235974 0.3604851
+3    4.5 2.12132 -0.8084506 0.8266054
 > 
 > Sys.time() - t0
-Time difference of 12.03579 secs
+Time difference of 12.03554 secs
 ```
 
-*future* allow easy parallelisation of heterogenous tasks (2/3)
+*future* allows easy parallelisation of heterogenous tasks (2/3)
 ========================================================
 Parallelization with *future*:
 
@@ -197,16 +197,16 @@ Parallelization with *future*:
 > myRunif %<-% slow(runif)(3)
 > 
 > data.frame(myMean, mySd, myRnorm, myRunif)
-  myMean    mySd   myRnorm   myRunif
-1    2.5 2.12132 1.0606803 0.6484825
-2    3.5 2.12132 0.4654688 0.5385649
-3    4.5 2.12132 0.7534253 0.4539509
+  myMean    mySd      myRnorm   myRunif
+1    2.5 2.12132  0.005661826 0.1218853
+2    3.5 2.12132 -0.354909042 0.3147438
+3    4.5 2.12132  0.375833827 0.1155356
 > 
 > Sys.time() - t0
-Time difference of 3.114923 secs
+Time difference of 3.115655 secs
 ```
 
-*future* allow easy parallelisation of heterogenous tasks (3/3)
+*future* allows easy parallelisation of heterogenous tasks (3/3)
 ========================================================
 Parallelization with parallel:
 
@@ -225,13 +225,13 @@ Parallelization with parallel:
 +     function(x) eval(parse(text = x))
 +     # mc.cores = 4L <- add this on non windows OS
 + ))
-  myMean    mySd     myRnorm   myRunif
-1    2.5 2.12132  0.83677806 0.8214132
-2    3.5 2.12132 -1.70406217 0.2800778
-3    4.5 2.12132 -0.06966156 0.6290161
+  myMean    mySd    myRnorm   myRunif
+1    2.5 2.12132 -2.6652296 0.9493826
+2    3.5 2.12132  0.3308004 0.1741118
+3    4.5 2.12132  1.9009600 0.4970288
 > 
 > Sys.time() - t0
-Time difference of 12.0199 secs
+Time difference of 12.02489 secs
 ```
 
 A *future_mclapply* draft function (1/2)
@@ -262,7 +262,7 @@ A *future_mclapply* draft function (1/2)
 + }
 ```
 
-A *future_mclapply* draft function (1/2)
+A *future_mclapply* draft function (2/2)
 ========================================================
 
 ```r
@@ -282,7 +282,7 @@ A *future_mclapply* draft function (1/2)
 [1] 3.141593
 > 
 > Sys.time() - t0
-Time difference of 3.033974 secs
+Time difference of 3.02435 secs
 ```
 
 One package, many plans
@@ -310,13 +310,13 @@ system
 > 
 > 
 > Sys.time() - t0
-Time difference of 0.7439382 secs
+Time difference of 0.7332718 secs
 > 
 > c(x1, x2, x3)
-[1]  1.2880858  0.3412981 -0.3605666
+[1]  0.1950557  0.9782678 -0.9215404
 > 
 > Sys.time() - t0
-Time difference of 3.753162 secs
+Time difference of 3.744617 secs
 ```
 ***
 
@@ -325,20 +325,20 @@ Time difference of 3.753162 secs
 > 
 > 
 > 
-> plan(multiprocess(workers = 1 + 2)) # 1 main  + 3 background
+> plan(multiprocess(workers = 1 + 2)) # 1 main  + 2 background
 > t0 <- Sys.time()
 > x1 %<-% slow_rnorm(1)
 > x2 %<-% slow_rnorm(1)
 > x3 %<-% slow_rnorm(1) # no more background process available, blocks the main process
 > 
 > Sys.time() - t0
-Time difference of 3.530033 secs
+Time difference of 3.485722 secs
 > 
 > c(x1, x2, x3)
-[1]  0.9291106 -1.1379026 -1.0312053
+[1] -0.4970261  0.6928258 -0.3332621
 > 
 > Sys.time() - t0
-Time difference of 6.537139 secs
+Time difference of 6.490151 secs
 ```
 
 
@@ -353,7 +353,7 @@ Miscellaneous
 > resolved(f)
 [1] FALSE
 ```
-* No easy way to stop an unresolved future at the moment. (killing the process?)
+* No easy way to stop an unresolved future at the moment (killing the process?)
 
 Links
 ========================================================
