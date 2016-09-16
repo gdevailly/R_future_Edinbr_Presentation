@@ -101,7 +101,7 @@ b
 Sys.time() - t0
 ```
 
-*future* variables can run in parallel:
+*futures* can run in parallel:
 ========================================================
 Standard assignment:
 ```{r parallel 1}
@@ -190,7 +190,7 @@ A *future_mclapply* draft function (1/2)
 ========================================================
 ```{r future_mclapply}
 future_mclapply <- function(myList, myFunction) {
-    if(is.vector(myList)) myList <- as.list(myList) # the function will work on vectors to
+    if(is.vector(myList)) myList <- as.list(myList) # the function will work on vectors too
     for(i in seq_along(myList)) {
         command <- paste0(
             "x",
