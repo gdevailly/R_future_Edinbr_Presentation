@@ -17,7 +17,7 @@ Guillaume Devailly, [@G_Devailly](https://twitter.com/G_Devailly)
 R future
 ========================================================
 
-Future is an R package by [Henrik Bengtsson](https://twitter.com/henrikbengtsson), available on [CRAN](https://cran.r-project.org/web/packages/future/index.html).
+Future is an R package by [Henrik Bengtsson](https://twitter.com/henrikbengtsson), available on [CRAN](https://cran.r-project.org/package=future).
 
 
 ```r
@@ -59,10 +59,10 @@ First, let's create slow functions:
 > t0 <- Sys.time()
 > 
 > slow_rnorm(4)
-[1]  0.242154279  1.012279949 -1.338579594  0.003491644
+[1]  1.706 -1.586  0.776 -0.139
 > 
 > Sys.time() - t0
-Time difference of 3.012811 secs
+Time difference of 3.01 secs
 ```
 
 `%<-%` is non blocking (2/2):
@@ -74,10 +74,10 @@ Without `%<-%`:
 > a <- slow_rnorm(2)
 > 
 > Sys.time() - t0
-Time difference of 3.008517 secs
+Time difference of 3.01 secs
 > 
 > a
-[1] -0.05181082 -0.66309328
+[1] -0.0302  0.6574
 ```
 ***
 With `%<-%`:
@@ -87,17 +87,17 @@ With `%<-%`:
 > b %<-% slow_rnorm(2)
 > 
 > Sys.time() - t0
-Time difference of 0.009992123 secs
+Time difference of 0.016 secs
 > 
 > b
-[1] -0.3755324  0.6766176
+[1] 0.935 1.681
 ```
 
 
 `%<-%` is **not** magic:
 ========================================================
 It create a *future*, a variable that will be available in the future.
-The task is **not** magicaly optimised, it runs in the background.
+The task is **not** magically optimised, it runs in the background.
 When the variable is needed, the R (main) process will wait until the *future* is resolved.
 
 ```r
@@ -105,13 +105,13 @@ When the variable is needed, the R (main) process will wait until the *future* i
 > b %<-% slow_rnorm(2)
 > 
 > Sys.time() - t0
-Time difference of 0.006513119 secs
+Time difference of 0.00661 secs
 > 
 > b
-[1]  0.7877939 -0.6519630
+[1] -0.115  0.987
 > 
 > Sys.time() - t0
-Time difference of 3.012473 secs
+Time difference of 3.01 secs
 ```
 
 *futures* can be run in parallel:
@@ -124,17 +124,17 @@ Standard assignment:
 > x2 <- slow_rnorm(2)
 > 
 > Sys.time() - t0
-Time difference of 6.019479 secs
+Time difference of 6.01 secs
 > 
 > list(x1, x2)
 [[1]]
-[1] -1.605941 -2.310211
+[1] 0.0642 1.5622
 
 [[2]]
-[1] 0.6198926 1.4842387
+[1]  2.133 -0.063
 > 
 > Sys.time() - t0
-Time difference of 6.026482 secs
+Time difference of 6.02 secs
 ```
 ***
 Assignment with future:
@@ -145,20 +145,20 @@ Assignment with future:
 > x4 %<-% slow_rnorm(2)
 > 
 > Sys.time() - t0
-Time difference of 0.05050611 secs
+Time difference of 0.0495 secs
 > 
 > list(x3, x4)
 [[1]]
-[1] 1.3221904 0.0371681
+[1]  1.0860 -0.0742
 
 [[2]]
-[1]  0.3116354 -1.8248445
+[1] -0.514 -0.370
 > 
 > Sys.time() - t0
-Time difference of 3.061399 secs
+Time difference of 3.06 secs
 ```
 
-*future* allows easy parallelisation of heterogenous tasks (1/3)
+*future* allows easy parallelisation of heterogeneous tasks (1/3)
 ========================================================
 
 ```r
@@ -176,13 +176,13 @@ Standard assignment:
 > myRunif <- slow(runif)(3)
 > 
 > data.frame(myMean, mySd, myRnorm, myRunif)
-  myMean    mySd    myRnorm   myRunif
-1    2.5 2.12132 -0.6964756 0.8142671
-2    3.5 2.12132  1.9235974 0.3604851
-3    4.5 2.12132 -0.8084506 0.8266054
+  myMean mySd myRnorm myRunif
+1    2.5 2.12  -0.964   0.724
+2    3.5 2.12  -1.853   0.911
+3    4.5 2.12  -0.466   0.559
 > 
 > Sys.time() - t0
-Time difference of 12.03554 secs
+Time difference of 12 secs
 ```
 
 *future* allows easy parallelisation of heterogenous tasks (2/3)
@@ -197,13 +197,13 @@ Parallelization with *future*:
 > myRunif %<-% slow(runif)(3)
 > 
 > data.frame(myMean, mySd, myRnorm, myRunif)
-  myMean    mySd      myRnorm   myRunif
-1    2.5 2.12132  0.005661826 0.1218853
-2    3.5 2.12132 -0.354909042 0.3147438
-3    4.5 2.12132  0.375833827 0.1155356
+  myMean mySd myRnorm myRunif
+1    2.5 2.12   -1.30   0.811
+2    3.5 2.12    1.30   0.511
+3    4.5 2.12    1.13   0.433
 > 
 > Sys.time() - t0
-Time difference of 3.115655 secs
+Time difference of 3.11 secs
 ```
 
 *future* allows easy parallelisation of heterogenous tasks (3/3)
@@ -225,16 +225,16 @@ Parallelization with parallel:
 +     function(x) eval(parse(text = x))
 +     # mc.cores = 4L <- add this on non windows OS
 + ))
-  myMean    mySd    myRnorm   myRunif
-1    2.5 2.12132 -2.6652296 0.9493826
-2    3.5 2.12132  0.3308004 0.1741118
-3    4.5 2.12132  1.9009600 0.4970288
+  myMean mySd myRnorm myRunif
+1    2.5 2.12  -2.648   0.963
+2    3.5 2.12   1.488   0.127
+3    4.5 2.12  -0.553   0.141
 > 
 > Sys.time() - t0
-Time difference of 12.02489 secs
+Time difference of 12 secs
 ```
 
-A *future_mclapply* draft function (1/2)
+A *future_mclapply* draft function (1/3)
 ========================================================
 
 ```r
@@ -262,7 +262,7 @@ A *future_mclapply* draft function (1/2)
 + }
 ```
 
-A *future_mclapply* draft function (2/2)
+A *future_mclapply* draft function (2/3)
 ========================================================
 
 ```r
@@ -279,10 +279,34 @@ A *future_mclapply* draft function (2/2)
 [1] 8
 
 [[3]]
-[1] 3.141593
+[1] 3.14
 > 
 > Sys.time() - t0
-Time difference of 3.02435 secs
+Time difference of 3.05 secs
+```
+
+A *future_mclapply* function (3/3)
+========================================================
+Or the hidden function (may change / disappear in future version of the package):
+
+```r
+> t0 <- Sys.time()
+> 
+> future:::flapply(
++     list(1:5, 6:10, pi),
++     slow(mean)
++ )
+[[1]]
+[1] 3
+
+[[2]]
+[1] 8
+
+[[3]]
+[1] 3.14
+> 
+> Sys.time() - t0
+Time difference of 3.04 secs
 ```
 
 One package, many plans
@@ -290,10 +314,12 @@ One package, many plans
 * `plan(multiprocess)`: parallel, non blocking
 * `plan(eager)`: non parallel, blocking (default)
 * `plan(lazy)`: non parallel, non blocking
-* `plan(cluster, workers = c("n1", "n2", "n3"))`: run in a cluster, non blocking
+* `plan(cluster, workers = c("n1", "n2", "n3"))`: run in a cluster, non blocking. Nice gestion of the global variables.
 * see also [future.BatchJobs](https://cran.r-project.org/web/packages/future.BatchJobs/index.html) for more cluster plans.
+Write package using *future*, users will choose how to run it by changing the `plan`.
 
-Limiting the number of cores in `plan(multiprocess)`
+
+Limiting the number of cores in `plan(multiprocess)` (1/2)
 ========================================================
 
 ```r
@@ -308,23 +334,19 @@ system
 > x3 %<-% slow_rnorm(1)
 > 
 > 
-> 
 > Sys.time() - t0
-Time difference of 0.7332718 secs
+Time difference of 0.728 secs
 > 
 > c(x1, x2, x3)
-[1]  0.1950557  0.9782678 -0.9215404
+[1] -1.021  0.130 -0.263
 > 
 > Sys.time() - t0
-Time difference of 3.744617 secs
+Time difference of 3.74 secs
 ```
-***
+Limiting the number of cores in `plan(multiprocess)` (2/2)
+========================================================
 
 ```r
-> 
-> 
-> 
-> 
 > plan(multiprocess(workers = 1 + 2)) # 1 main  + 2 background
 > t0 <- Sys.time()
 > x1 %<-% slow_rnorm(1)
@@ -332,13 +354,13 @@ Time difference of 3.744617 secs
 > x3 %<-% slow_rnorm(1) # no more background process available, blocks the main process
 > 
 > Sys.time() - t0
-Time difference of 3.485722 secs
+Time difference of 3.49 secs
 > 
 > c(x1, x2, x3)
-[1] -0.4970261  0.6928258 -0.3332621
+[1] -1.816  0.287  1.931
 > 
 > Sys.time() - t0
-Time difference of 6.490151 secs
+Time difference of 6.5 secs
 ```
 
 
@@ -359,6 +381,8 @@ Links
 ========================================================
 * The package: [(https://cran.r-project.org/web/packages/future/index.html)](https://cran.r-project.org/web/packages/future/index.html)
 * The comprehensive vignette:[https://cran.r-project.org/web/packages/future/vignettes/future-1-overview.html](https://cran.r-project.org/web/packages/future/vignettes/future-1-overview.html)
+* [slides from useR2016](http://www.jottr.org/2016/07/a-future-for-r-slides-from-user-2016.html) by Henrik Bengtsson.
+* [`doFuture` package](https://cran.r-project.org/package=doFuture): alternative to `doMC`, `doParallel`, `doMPI`, and `doSNOW`.
 
 
 

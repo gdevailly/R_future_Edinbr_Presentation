@@ -16,12 +16,13 @@ Guillaume Devailly, [@G_Devailly](https://twitter.com/G_Devailly)
 knitr::opts_chunk$set(echo = TRUE, collapse = TRUE, prompt = TRUE)
 library(future)
 plan(multiprocess)
+options(digits = 3)
 ```
 
 R future
 ========================================================
 
-Future is an R package by [Henrik Bengtsson](https://twitter.com/henrikbengtsson), available on [CRAN](https://cran.r-project.org/web/packages/future/index.html).
+Future is an R package by [Henrik Bengtsson](https://twitter.com/henrikbengtsson), available on [CRAN](https://cran.r-project.org/package=future).
 
 ```{r install package, eval = FALSE}
 install.packages("future")
@@ -88,7 +89,7 @@ b
 `%<-%` is **not** magic:
 ========================================================
 It create a *future*, a variable that will be available in the future.
-The task is **not** magicaly optimised, it runs in the background.
+The task is **not** magically optimised, it runs in the background.
 When the variable is needed, the R (main) process will wait until the *future* is resolved.
 ```{r non magical}
 t0 <- Sys.time()
@@ -129,7 +130,7 @@ list(x3, x4)
 Sys.time() - t0
 ```
 
-*future* allows easy parallelisation of heterogenous tasks (1/3)
+*future* allows easy parallelisation of heterogeneous tasks (1/3)
 ========================================================
 ```{r complex task 0}
 myMat <- matrix(1:6, ncol = 2)
@@ -186,7 +187,7 @@ as.data.frame(mclapply( # not parallel on windows, but should work elsewhere
 Sys.time() - t0
 ```
 
-A *future_mclapply* draft function (1/2)
+A *future_mclapply* draft function (1/3)
 ========================================================
 ```{r future_mclapply}
 future_mclapply <- function(myList, myFunction) {
@@ -213,7 +214,7 @@ future_mclapply <- function(myList, myFunction) {
 }
 ```
 
-A *future_mclapply* draft function (2/2)
+A *future_mclapply* draft function (2/3)
 ========================================================
 ```{r future_mclapply2}
 t0 <- Sys.time()
@@ -226,15 +227,31 @@ future_mclapply(
 Sys.time() - t0
 ```
 
+A *future_mclapply* function (3/3)
+========================================================
+Or the hidden function (may change / disappear in future version of the package):
+```{r future_mclapply3}
+t0 <- Sys.time()
+
+future:::flapply(
+    list(1:5, 6:10, pi),
+    slow(mean)
+)
+
+Sys.time() - t0
+```
+
 One package, many plans
 ========================================================
 * `plan(multiprocess)`: parallel, non blocking
 * `plan(eager)`: non parallel, blocking (default)
 * `plan(lazy)`: non parallel, non blocking
-* `plan(cluster, workers = c("n1", "n2", "n3"))`: run in a cluster, non blocking
+* `plan(cluster, workers = c("n1", "n2", "n3"))`: run in a cluster, non blocking. Nice gestion of the global variables.
 * see also [future.BatchJobs](https://cran.r-project.org/web/packages/future.BatchJobs/index.html) for more cluster plans.
+Write package using *future*, users will choose how to run it by changing the `plan`.
 
-Limiting the number of cores in `plan(multiprocess)`
+
+Limiting the number of cores in `plan(multiprocess)` (1/2)
 ========================================================
 ```{r limiting number of cores}
 availableCores()
@@ -246,19 +263,15 @@ x2 %<-% slow_rnorm(1)
 x3 %<-% slow_rnorm(1)
 
 
-
 Sys.time() - t0
 
 c(x1, x2, x3)
 
 Sys.time() - t0
 ```
-***
+Limiting the number of cores in `plan(multiprocess)` (2/2)
+========================================================
 ```{r limiting number of cores 2}
-
-
-
-
 plan(multiprocess(workers = 1 + 2)) # 1 main  + 2 background
 t0 <- Sys.time()
 x1 %<-% slow_rnorm(1)
@@ -288,6 +301,8 @@ Links
 ========================================================
 * The package: [(https://cran.r-project.org/web/packages/future/index.html)](https://cran.r-project.org/web/packages/future/index.html)
 * The comprehensive vignette:[https://cran.r-project.org/web/packages/future/vignettes/future-1-overview.html](https://cran.r-project.org/web/packages/future/vignettes/future-1-overview.html)
+* [slides from useR2016](http://www.jottr.org/2016/07/a-future-for-r-slides-from-user-2016.html) by Henrik Bengtsson.
+* [`doFuture` package](https://cran.r-project.org/package=doFuture): alternative to `doMC`, `doParallel`, `doMPI`, and `doSNOW`.
 
 
 
