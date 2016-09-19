@@ -248,6 +248,7 @@ One package, many plans
 * `plan(lazy)`: non parallel, non blocking
 * `plan(cluster, workers = c("n1", "n2", "n3"))`: run in a cluster, non blocking. Nice gestion of the global variables.
 * see also [future.BatchJobs](https://cran.r-project.org/web/packages/future.BatchJobs/index.html) for more cluster plans.
+
 Write package using *future*, users will choose how to run it by changing the `plan`.
 
 
